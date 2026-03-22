@@ -1,0 +1,14 @@
+{
+  "name": "oil-kpi-tracker",
+  "version": "1.0.0",
+  "description": "KPI tracker for oil and related products - tracks % change WoW, MTD, and YTD",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node src/seed-data.js",
+    "test": "node src/test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
