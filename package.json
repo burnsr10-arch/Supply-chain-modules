@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "seed": "node src/seed-data.js",
+    "fetch-securities": "node src/seeking-alpha-fetcher.js",
+    "seed-all": "node src/seed-data.js && node src/seeking-alpha-fetcher.js",
     "test": "node src/test.js"
   },
   "dependencies": {

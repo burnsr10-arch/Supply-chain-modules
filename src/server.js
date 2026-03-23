@@ -4,6 +4,7 @@ const path = require('path');
 const { OIL_PRODUCTS, CATEGORIES } = require('./products');
 const { calculateAllKPIs } = require('./kpi-engine');
 const { RELATED_SECURITIES } = require('./related-securities');
+const { DATA_PATH: SEC_DATA_PATH } = require('./seeking-alpha-fetcher');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,11 @@ function loadPriceData() {
     process.exit(1);
   }
   return JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+}
+
+function loadSecuritiesData() {
+  if (!fs.existsSync(SEC_DATA_PATH)) return null;
+  return JSON.parse(fs.readFileSync(SEC_DATA_PATH, 'utf-8'));
 }
 
 // API: Get all products
@@ -47,12 +53,32 @@ app.get('/api/prices', (req, res) => {
   res.json(trimmed);
 });
 
-// API: Get related stocks & ETFs for all products
+// API: Get related stocks & ETFs (static definitions)
 app.get('/api/securities', (req, res) => {
   res.json(RELATED_SECURITIES);
 });
 
-// API: Get related stocks & ETFs for a single product
+// API: Get securities with Seeking Alpha performance data
+app.get('/api/securities-performance', (req, res) => {
+  const secData = loadSecuritiesData();
+  if (!secData) {
+    return res.status(404).json({ error: 'No securities data. Run: npm run fetch-securities' });
+  }
+  res.json(secData);
+});
+
+// API: Get securities performance by product
+app.get('/api/securities-performance/:productId', (req, res) => {
+  const secData = loadSecuritiesData();
+  if (!secData) {
+    return res.status(404).json({ error: 'No securities data. Run: npm run fetch-securities' });
+  }
+  const product = secData.byProduct[req.params.productId];
+  if (!product) return res.status(404).json({ error: 'Product not found' });
+  res.json(product);
+});
+
+// API: Get related stocks & ETFs for a single product (static)
 app.get('/api/securities/:productId', (req, res) => {
   const data = RELATED_SECURITIES[req.params.productId];
   if (!data) return res.status(404).json({ error: 'No securities data for product' });
