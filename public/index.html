@@ -29,6 +29,14 @@
       min-height: 100vh;
     }
 
+    /* TradingView Ticker Tape */
+    .tv-ticker-tape {
+      width: 100%;
+      height: 46px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
     .header {
       background: var(--bg-secondary);
       border-bottom: 1px solid var(--border);
@@ -222,7 +230,7 @@
 
     /* Expandable securities row */
     .product-row { cursor: pointer; }
-    .product-row:hover { background: rgba(59, 130, 246, 0.08); }
+    .product-row:hover { background: rgba(59, 130, 246, 0.08) !important; }
 
     .expand-icon {
       display: inline-block;
@@ -243,11 +251,11 @@
     .securities-panel {
       overflow: hidden;
       max-height: 0;
-      transition: max-height 0.3s ease;
+      transition: max-height 0.4s ease;
     }
 
     .securities-panel.open {
-      max-height: 600px;
+      max-height: 2000px;
     }
 
     .securities-inner {
@@ -289,48 +297,28 @@
     .legend-dot.stock { background: var(--accent); }
     .legend-dot.etf { background: var(--yellow); }
 
-    .securities-grid {
+    /* TradingView mini symbol widgets */
+    .tv-symbols-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
-    .sec-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+    .tv-symbol-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
     }
 
-    .sec-table thead th {
-      text-align: left;
-      padding: 8px 10px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    .sec-table thead th.right { text-align: right; }
-
-    .sec-table tbody tr {
-      border-bottom: 1px solid rgba(42, 63, 82, 0.5);
-    }
-
-    .sec-table tbody tr:last-child { border-bottom: none; }
-
-    .sec-table td {
-      padding: 8px 10px;
-      vertical-align: middle;
-    }
-
-    .sec-table td.right { text-align: right; font-variant-numeric: tabular-nums; }
-
-    .sec-ticker-cell {
+    .tv-symbol-card .card-header {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
     }
 
     .security-badge {
@@ -349,54 +337,67 @@
     .security-badge.stock { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
     .security-badge.etf   { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
 
-    .sec-ticker {
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--text-primary);
+    .card-ticker { font-weight: 700; font-size: 14px; }
+    .card-name { font-size: 12px; color: var(--text-secondary); }
+    .card-exposure { font-size: 11px; color: var(--text-secondary); opacity: 0.7; margin-left: auto; max-width: 180px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .tv-widget-container {
+      height: 180px;
+      width: 100%;
     }
 
-    .sec-name {
-      font-size: 12px;
-      color: var(--text-secondary);
-      max-width: 200px;
-      white-space: nowrap;
+    /* TradingView detail chart area */
+    .tv-detail-section {
+      margin-top: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .sec-price {
+    .tv-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tv-detail-header span {
+      font-size: 13px;
       font-weight: 600;
-      font-variant-numeric: tabular-nums;
     }
 
-    .sa-rating {
-      display: inline-block;
-      padding: 2px 8px;
+    .tv-detail-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tv-detail-tab {
+      padding: 4px 12px;
       border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
     }
 
-    .sa-rating.buy { background: var(--green-bg); color: var(--green); }
-    .sa-rating.hold { background: rgba(245, 158, 11, 0.1); color: var(--yellow); }
-    .sa-rating.sell { background: var(--red-bg); color: var(--red); }
+    .tv-detail-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+    .tv-detail-tab:hover { border-color: var(--accent); }
 
-    .sa-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 11px;
-      opacity: 0.8;
+    .tv-detail-chart {
+      height: 400px;
+      width: 100%;
     }
 
-    .sa-link:hover { opacity: 1; text-decoration: underline; }
-
-    .sec-data-source {
+    .tv-source-note {
       text-align: right;
       padding: 8px 0 0;
       font-size: 11px;
       color: var(--text-secondary);
-      opacity: 0.6;
+      opacity: 0.5;
     }
 
     @media (max-width: 768px) {
@@ -407,10 +408,42 @@
       .kpi-table { font-size: 13px; }
       .kpi-table td, .kpi-table th { padding: 10px 8px; }
       .sparkline-cell { display: none; }
+      .tv-symbols-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
+  <!-- TradingView Ticker Tape - live energy prices across the top -->
+  <div class="tv-ticker-tape">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          {"proName": "NYMEX:CL1!", "title": "WTI Crude"},
+          {"proName": "NYMEX:BZ1!", "title": "Brent Crude"},
+          {"proName": "NYMEX:RB1!", "title": "RBOB Gas"},
+          {"proName": "NYMEX:HO1!", "title": "Heating Oil"},
+          {"proName": "NYMEX:NG1!", "title": "Nat Gas"},
+          {"proName": "AMEX:USO", "title": "USO"},
+          {"proName": "AMEX:XLE", "title": "XLE"},
+          {"proName": "NYSE:XOM", "title": "XOM"},
+          {"proName": "NYSE:CVX", "title": "CVX"},
+          {"proName": "NYSE:MPC", "title": "MPC"},
+          {"proName": "NYSE:LNG", "title": "LNG"},
+          {"proName": "NYSE:VLO", "title": "VLO"}
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": true,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "en"
+      }
+      </script>
+    </div>
+  </div>
+
   <div class="header">
     <h1><span class="icon">&#9951;</span> Oil &amp; Energy KPI Tracker</h1>
     <div class="header-meta">
@@ -434,23 +467,21 @@
     let allProducts = null;
     let priceHistory = null;
     let securitiesData = null;
-    let secPerfData = null;
     let activeFilter = 'All';
     let expandedRows = new Set();
+    let loadedWidgets = new Set();
 
     async function loadData() {
-      const [kpiRes, productRes, historyRes, secRes, secPerfRes] = await Promise.all([
+      const [kpiRes, productRes, historyRes, secRes] = await Promise.all([
         fetch('/api/kpis'),
         fetch('/api/products'),
         fetch('/api/prices'),
-        fetch('/api/securities'),
-        fetch('/api/securities-performance')
+        fetch('/api/securities')
       ]);
       allData = await kpiRes.json();
       allProducts = await productRes.json();
       priceHistory = await historyRes.json();
       securitiesData = await secRes.json();
-      secPerfData = secPerfRes.ok ? await secPerfRes.json() : null;
       render();
     }
 
@@ -559,30 +590,118 @@
       `;
     }
 
-    function formatSecPrice(val) {
-      if (val == null) return '-';
-      return '$' + val.toFixed(2);
+    // Map ticker to TradingView symbol format
+    function tvSymbol(ticker) {
+      // ETFs on AMEX/ARCA
+      const amexETFs = ['USO','BNO','DBO','UGA','UNG','BOIL','CRAK','BDRY','BOAT','SEA','JETS','AMLP','MLPA','EMLP'];
+      const nyseArcaETFs = ['XLE','XOP','XLB','IEO','IYT','IYM','VDE','VAW','FILL','FENY','FCG','XEG'];
+      if (amexETFs.includes(ticker)) return 'AMEX:' + ticker;
+      if (nyseArcaETFs.includes(ticker)) return 'AMEX:' + ticker;
+      // Known NASDAQ
+      const nasdaq = ['PARR','CASY'];
+      if (nasdaq.includes(ticker)) return 'NASDAQ:' + ticker;
+      // Default to NYSE for stocks
+      return 'NYSE:' + ticker;
     }
 
-    function formatSmallPct(val) {
-      if (val == null) return '<span class="change flat" style="padding:2px 6px;font-size:11px">N/A</span>';
-      const dir = val > 0.05 ? 'up' : val < -0.05 ? 'down' : 'flat';
-      const arrow = dir === 'up' ? '&#9650;' : dir === 'down' ? '&#9660;' : '&#9644;';
-      const sign = val > 0 ? '+' : '';
-      return `<span class="change ${dir}" style="padding:2px 6px;font-size:11px"><span class="arrow">${arrow}</span>${sign}${val.toFixed(2)}%</span>`;
+    function createMiniWidget(containerId, ticker) {
+      if (loadedWidgets.has(containerId)) return;
+      const el = document.getElementById(containerId);
+      if (!el) return;
+
+      loadedWidgets.add(containerId);
+
+      const widget = document.createElement('div');
+      widget.className = 'tradingview-widget-container';
+      widget.style.height = '100%';
+      widget.style.width = '100%';
+      widget.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+      script.async = true;
+      script.textContent = JSON.stringify({
+        symbol: tvSymbol(ticker),
+        width: '100%',
+        height: '100%',
+        locale: 'en',
+        dateRange: '1M',
+        colorTheme: 'dark',
+        isTransparent: true,
+        autosize: true,
+        largeChartUrl: '',
+        noTimeScale: false
+      });
+
+      widget.appendChild(script);
+      el.appendChild(widget);
     }
 
-    function ratingClass(rating) {
-      if (!rating) return 'hold';
-      const r = rating.toLowerCase();
-      if (r.includes('buy')) return 'buy';
-      if (r.includes('sell')) return 'sell';
-      return 'hold';
+    function createDetailChart(containerId, ticker, interval) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = '';
+
+      const widget = document.createElement('div');
+      widget.className = 'tradingview-widget-container';
+      widget.style.height = '100%';
+      widget.style.width = '100%';
+      widget.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+
+      const intervalMap = { '1W': 'D', '1M': 'D', '3M': 'W', '1Y': 'W', 'YTD': 'D' };
+      const rangeMap = { '1W': '5D', '1M': '1M', '3M': '3M', '1Y': '12M', 'YTD': 'YTD' };
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      script.textContent = JSON.stringify({
+        autosize: true,
+        symbol: tvSymbol(ticker),
+        interval: intervalMap[interval] || 'D',
+        timezone: 'America/New_York',
+        theme: 'dark',
+        style: '3',
+        locale: 'en',
+        backgroundColor: '#1e2d3d',
+        gridColor: '#2a3f52',
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        range: rangeMap[interval] || '1M',
+        allow_symbol_change: true
+      });
+
+      widget.appendChild(script);
+      el.appendChild(widget);
     }
 
-    function getSecPerf(ticker) {
-      if (!secPerfData || !secPerfData.tickers) return null;
-      return secPerfData.tickers[ticker] || null;
+    let activeDetailTicker = {};
+    let activeDetailInterval = {};
+
+    function setDetailTicker(productId, ticker) {
+      activeDetailTicker[productId] = ticker;
+      const interval = activeDetailInterval[productId] || '1M';
+      const chartId = 'detail-chart-' + productId;
+      loadedWidgets.delete(chartId);
+      createDetailChart(chartId, ticker, interval);
+      // Update active state on cards
+      document.querySelectorAll(`.tv-symbol-card[data-product="${productId}"]`).forEach(card => {
+        card.style.borderColor = card.dataset.ticker === ticker ? 'var(--accent)' : 'var(--border)';
+      });
+    }
+
+    function setDetailInterval(productId, interval) {
+      activeDetailInterval[productId] = interval;
+      const ticker = activeDetailTicker[productId];
+      if (!ticker) return;
+      const chartId = 'detail-chart-' + productId;
+      createDetailChart(chartId, ticker, interval);
+      // Update tab styles
+      document.querySelectorAll(`.tv-detail-tab[data-product="${productId}"]`).forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.interval === interval);
+      });
     }
 
     function renderSecuritiesPanel(productId) {
@@ -592,57 +711,77 @@
       const isOpen = expandedRows.has(productId);
       let html = `<div class="securities-panel ${isOpen ? 'open' : ''}" id="panel-${productId}">`;
       html += '<div class="securities-inner">';
+
+      // Header
       html += `<div class="securities-header">
-        <h4>Top 10 Related Stocks &amp; ETFs — Seeking Alpha Data</h4>
+        <h4>Top 10 Related Stocks &amp; ETFs — Live TradingView Data</h4>
         <div class="securities-legend">
-          <span class="legend-item"><span class="legend-dot stock" style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>Stock</span>
-          <span class="legend-item"><span class="legend-dot etf" style="width:8px;height:8px;border-radius:50%;background:var(--yellow)"></span>ETF</span>
+          <span class="legend-item"><span class="legend-dot stock"></span>Stock</span>
+          <span class="legend-item"><span class="legend-dot etf"></span>ETF</span>
         </div>
       </div>`;
 
-      html += `<table class="sec-table"><thead><tr>
-        <th>Ticker</th>
-        <th>Name</th>
-        <th class="right">Price</th>
-        <th class="right">WoW</th>
-        <th class="right">MTD</th>
-        <th class="right">YTD</th>
-        <th class="right">1Y</th>
-        <th>SA Rating</th>
-        <th></th>
-      </tr></thead><tbody>`;
-
+      // Mini symbol overview widgets grid
+      html += '<div class="tv-symbols-grid">';
       for (const s of sec.securities) {
         const typeLower = s.type.toLowerCase();
-        const perf = getSecPerf(s.ticker);
-
-        html += `<tr>
-          <td>
-            <div class="sec-ticker-cell">
+        const widgetId = `tv-mini-${productId}-${s.ticker}`;
+        html += `
+          <div class="tv-symbol-card" data-product="${productId}" data-ticker="${s.ticker}"
+               onclick="setDetailTicker('${productId}', '${s.ticker}')" style="cursor:pointer">
+            <div class="card-header">
               <span class="security-badge ${typeLower}">${s.type}</span>
-              <span class="sec-ticker">${s.ticker}</span>
+              <span class="card-ticker">${s.ticker}</span>
+              <span class="card-name">${s.name}</span>
+              <span class="card-exposure" title="${s.exposure}">${s.exposure}</span>
             </div>
-          </td>
-          <td><span class="sec-name">${s.name}</span></td>
-          <td class="right"><span class="sec-price">${perf ? formatSecPrice(perf.price) : '-'}</span></td>
-          <td class="right">${perf ? formatSmallPct(perf.wow) : '-'}</td>
-          <td class="right">${perf ? formatSmallPct(perf.mtd) : '-'}</td>
-          <td class="right">${perf ? formatSmallPct(perf.ytd) : '-'}</td>
-          <td class="right">${perf ? formatSmallPct(perf.oneYear) : '-'}</td>
-          <td>${perf && perf.saRating ? `<span class="sa-rating ${ratingClass(perf.saRating)}">${perf.saRating}</span>` : '-'}</td>
-          <td>${perf && perf.saUrl ? `<a class="sa-link" href="${perf.saUrl}" target="_blank" rel="noopener">SA &#8599;</a>` : ''}</td>
-        </tr>`;
+            <div class="tv-widget-container" id="${widgetId}"></div>
+          </div>`;
       }
+      html += '</div>';
 
-      html += '</tbody></table>';
+      // Detail chart area
+      const firstTicker = sec.securities[0].ticker;
+      html += `
+        <div class="tv-detail-section">
+          <div class="tv-detail-header">
+            <span id="detail-label-${productId}">Click a ticker above for detailed chart</span>
+            <div class="tv-detail-tabs">
+              <button class="tv-detail-tab" data-product="${productId}" data-interval="1W" onclick="setDetailInterval('${productId}','1W')">1W</button>
+              <button class="tv-detail-tab active" data-product="${productId}" data-interval="1M" onclick="setDetailInterval('${productId}','1M')">1M</button>
+              <button class="tv-detail-tab" data-product="${productId}" data-interval="3M" onclick="setDetailInterval('${productId}','3M')">3M</button>
+              <button class="tv-detail-tab" data-product="${productId}" data-interval="YTD" onclick="setDetailInterval('${productId}','YTD')">YTD</button>
+              <button class="tv-detail-tab" data-product="${productId}" data-interval="1Y" onclick="setDetailInterval('${productId}','1Y')">1Y</button>
+            </div>
+          </div>
+          <div class="tv-detail-chart" id="detail-chart-${productId}"></div>
+        </div>`;
 
-      // Data source footer
-      const source = secPerfData && secPerfData.meta ? secPerfData.meta.source : 'unknown';
-      const fetchedAt = secPerfData && secPerfData.meta ? new Date(secPerfData.meta.fetchedAt).toLocaleString() : '';
-      html += `<div class="sec-data-source">Source: ${source === 'seeking_alpha' ? 'Seeking Alpha (Live)' : 'Sample Data'} | Updated: ${fetchedAt}</div>`;
-
+      html += '<div class="tv-source-note">Powered by TradingView</div>';
       html += '</div></div>';
       return html;
+    }
+
+    function initWidgetsForProduct(productId) {
+      const sec = securitiesData[productId];
+      if (!sec) return;
+
+      // Load mini widgets with a slight stagger to avoid overwhelming
+      sec.securities.forEach((s, i) => {
+        setTimeout(() => {
+          createMiniWidget(`tv-mini-${productId}-${s.ticker}`, s.ticker);
+        }, i * 150);
+      });
+
+      // Auto-select first ticker for detail chart
+      if (!activeDetailTicker[productId]) {
+        const firstTicker = sec.securities[0].ticker;
+        activeDetailTicker[productId] = firstTicker;
+        activeDetailInterval[productId] = '1M';
+        setTimeout(() => {
+          setDetailTicker(productId, firstTicker);
+        }, sec.securities.length * 150 + 200);
+      }
     }
 
     function toggleRow(productId) {
@@ -655,6 +794,10 @@
       const icon = document.getElementById('icon-' + productId);
       if (panel) {
         panel.classList.toggle('open');
+        // Load widgets when opening
+        if (panel.classList.contains('open')) {
+          setTimeout(() => initWidgetsForProduct(productId), 300);
+        }
       }
       if (icon) {
         icon.classList.toggle('open');
@@ -663,6 +806,7 @@
 
     function renderTable(filtered) {
       const container = document.getElementById('table-container');
+      loadedWidgets.clear();
       let html = `
         <table class="kpi-table">
           <thead>
@@ -713,6 +857,11 @@
         const pid = canvas.dataset.product;
         drawSparkline(canvas, priceHistory[pid]);
       });
+
+      // Re-init widgets for already expanded rows
+      for (const pid of expandedRows) {
+        setTimeout(() => initWidgetsForProduct(pid), 500);
+      }
     }
 
     function render() {
