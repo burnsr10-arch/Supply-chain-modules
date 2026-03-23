@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { OIL_PRODUCTS, CATEGORIES } = require('./products');
 const { calculateAllKPIs } = require('./kpi-engine');
+const { RELATED_SECURITIES } = require('./related-securities');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +45,18 @@ app.get('/api/prices', (req, res) => {
     trimmed[id] = history.slice(-30);
   }
   res.json(trimmed);
+});
+
+// API: Get related stocks & ETFs for all products
+app.get('/api/securities', (req, res) => {
+  res.json(RELATED_SECURITIES);
+});
+
+// API: Get related stocks & ETFs for a single product
+app.get('/api/securities/:productId', (req, res) => {
+  const data = RELATED_SECURITIES[req.params.productId];
+  if (!data) return res.status(404).json({ error: 'No securities data for product' });
+  res.json(data);
 });
 
 // API: Get KPI for a single product

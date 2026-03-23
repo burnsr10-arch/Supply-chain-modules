@@ -220,6 +220,135 @@
       color: var(--text-primary);
     }
 
+    /* Expandable securities row */
+    .product-row { cursor: pointer; }
+    .product-row:hover { background: rgba(59, 130, 246, 0.08); }
+
+    .expand-icon {
+      display: inline-block;
+      width: 16px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      transition: transform 0.2s;
+      margin-right: 6px;
+    }
+
+    .expand-icon.open { transform: rotate(90deg); }
+
+    .securities-row td {
+      padding: 0 !important;
+      background: var(--bg-secondary);
+    }
+
+    .securities-panel {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+
+    .securities-panel.open {
+      max-height: 600px;
+    }
+
+    .securities-inner {
+      padding: 16px 20px 20px;
+    }
+
+    .securities-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .securities-header h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .securities-legend {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.stock { background: var(--accent); }
+    .legend-dot.etf { background: var(--yellow); }
+
+    .securities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 8px;
+    }
+
+    .security-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .security-card:hover { border-color: var(--accent); }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 28px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    .security-badge.stock { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+    .security-badge.etf   { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
+
+    .security-info { flex: 1; min-width: 0; }
+
+    .security-ticker {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .security-name {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .security-exposure {
+      font-size: 11px;
+      color: var(--text-secondary);
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     @media (max-width: 768px) {
       .header { padding: 16px; }
       .summary-row { padding: 16px; }
@@ -254,17 +383,21 @@
     let allData = null;
     let allProducts = null;
     let priceHistory = null;
+    let securitiesData = null;
     let activeFilter = 'All';
+    let expandedRows = new Set();
 
     async function loadData() {
-      const [kpiRes, productRes, historyRes] = await Promise.all([
+      const [kpiRes, productRes, historyRes, secRes] = await Promise.all([
         fetch('/api/kpis'),
         fetch('/api/products'),
-        fetch('/api/prices')
+        fetch('/api/prices'),
+        fetch('/api/securities')
       ]);
       allData = await kpiRes.json();
       allProducts = await productRes.json();
       priceHistory = await historyRes.json();
+      securitiesData = await secRes.json();
       render();
     }
 
@@ -373,6 +506,54 @@
       `;
     }
 
+    function renderSecuritiesPanel(productId) {
+      const sec = securitiesData[productId];
+      if (!sec) return '<div class="securities-inner"><em style="color:var(--text-secondary)">No related securities data</em></div>';
+
+      const isOpen = expandedRows.has(productId);
+      let html = `<div class="securities-panel ${isOpen ? 'open' : ''}" id="panel-${productId}">`;
+      html += '<div class="securities-inner">';
+      html += `<div class="securities-header">
+        <h4>Top 10 Related Stocks &amp; ETFs</h4>
+        <div class="securities-legend">
+          <span class="legend-item"><span class="legend-dot stock"></span>Stock</span>
+          <span class="legend-item"><span class="legend-dot etf"></span>ETF</span>
+        </div>
+      </div>`;
+      html += '<div class="securities-grid">';
+
+      for (const s of sec.securities) {
+        const typeLower = s.type.toLowerCase();
+        html += `
+          <div class="security-card">
+            <div class="security-badge ${typeLower}">${s.type}</div>
+            <div class="security-info">
+              <div><span class="security-ticker">${s.ticker}</span> <span class="security-name">${s.name}</span></div>
+              <div class="security-exposure">${s.exposure}</div>
+            </div>
+          </div>`;
+      }
+
+      html += '</div></div></div>';
+      return html;
+    }
+
+    function toggleRow(productId) {
+      if (expandedRows.has(productId)) {
+        expandedRows.delete(productId);
+      } else {
+        expandedRows.add(productId);
+      }
+      const panel = document.getElementById('panel-' + productId);
+      const icon = document.getElementById('icon-' + productId);
+      if (panel) {
+        panel.classList.toggle('open');
+      }
+      if (icon) {
+        icon.classList.toggle('open');
+      }
+    }
+
     function renderTable(filtered) {
       const container = document.getElementById('table-container');
       let html = `
@@ -393,13 +574,16 @@
       for (const product of filtered) {
         const kpi = allData[product.id];
         if (!kpi) continue;
+        const isOpen = expandedRows.has(product.id);
 
         html += `
-          <tr>
+          <tr class="product-row" onclick="toggleRow('${product.id}')">
             <td>
               <div class="product-cell">
-                <span class="product-name">${product.name}</span>
-                <span class="product-category">${product.category}</span>
+                <span class="product-name">
+                  <span class="expand-icon ${isOpen ? 'open' : ''}" id="icon-${product.id}">&#9654;</span>${product.name}
+                </span>
+                <span class="product-category" style="margin-left:22px">${product.category} &middot; 10 related securities</span>
               </div>
             </td>
             <td class="right">${formatPrice(kpi.currentPrice, product.unit)}</td>
@@ -407,6 +591,9 @@
             <td class="right">${formatPct(kpi.mtd.pctChange)}</td>
             <td class="right">${formatPct(kpi.ytd.pctChange)}</td>
             <td class="sparkline-cell"><canvas class="sparkline" data-product="${product.id}"></canvas></td>
+          </tr>
+          <tr class="securities-row">
+            <td colspan="6">${renderSecuritiesPanel(product.id)}</td>
           </tr>
         `;
       }
